@@ -1,26 +1,372 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-deep: #0D0D1A;
+  --bg-indigo: #1A1A2E;
+  --moi-purple: #4E31AA;
+  --moi-purple-light: #7B5FD4;
+  --neon-cyan: #00F0FF;
+  --neon-cyan-dim: #0891b2;
+  --surface: rgba(26, 26, 46, 0.7);
+  --surface-border: rgba(78, 49, 170, 0.18);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-deep);
+  --color-foreground: #ededed;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Base ─────────────────────────────────────────── */
+
+body {
+  background: var(--bg-deep);
+  color: #ededed;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(78, 49, 170, 0.4);
+  color: #fff;
+}
+
+/* ─── Animated Mesh Background ─────────────────────── */
+
+.tour-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 5%, rgba(78, 49, 170, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 85% 85%, rgba(0, 240, 255, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(78, 49, 170, 0.05) 0%, transparent 80%),
+    var(--bg-deep);
+  animation: meshDrift 25s ease-in-out infinite alternate;
+}
+
+@keyframes meshDrift {
+  0% {
+    background:
+      radial-gradient(ellipse 70% 50% at 15% 5%, rgba(78, 49, 170, 0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 70% at 85% 85%, rgba(0, 240, 255, 0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 50% 50%, rgba(78, 49, 170, 0.05) 0%, transparent 80%),
+      var(--bg-deep);
+  }
+  100% {
+    background:
+      radial-gradient(ellipse 70% 50% at 75% 85%, rgba(78, 49, 170, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 70% at 15% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 55% 45%, rgba(78, 49, 170, 0.06) 0%, transparent 80%),
+      var(--bg-deep);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─── Glass Surfaces ───────────────────────────────── */
+
+.glass {
+  background: rgba(13, 13, 26, 0.55);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--surface-border);
+  border-radius: 1rem;
+}
+
+.glass-strong {
+  background: rgba(13, 13, 26, 0.82);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(78, 49, 170, 0.22);
+  border-radius: 1.25rem;
+}
+
+/* ─── Glow Effects ─────────────────────────────────── */
+
+.glow-purple {
+  box-shadow:
+    0 0 24px rgba(78, 49, 170, 0.2),
+    0 0 80px rgba(78, 49, 170, 0.06);
+}
+
+.glow-cyan {
+  box-shadow:
+    0 0 24px rgba(0, 240, 255, 0.15),
+    0 0 80px rgba(0, 240, 255, 0.04);
+}
+
+.glow-success {
+  box-shadow:
+    0 0 24px rgba(34, 197, 94, 0.18),
+    0 0 80px rgba(34, 197, 94, 0.05);
+}
+
+/* ─── Animated Gradient Border ─────────────────────── */
+
+.gradient-border {
+  position: relative;
+}
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(78, 49, 170, 0.5),
+    rgba(0, 240, 255, 0.4),
+    rgba(78, 49, 170, 0.5)
+  );
+  background-size: 200% 200%;
+  animation: borderPulse 4s ease-in-out infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+@keyframes borderPulse {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ─── Animations ───────────────────────────────────── */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(60px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.slide-in-right {
+  animation: slideInRight 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 25%,
+    rgba(78, 49, 170, 0.1) 50%,
+    transparent 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+.pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Confetti for success screen */
+@keyframes confettiFall {
+  0%   { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* Stamp / passport stamp effect */
+@keyframes stampIn {
+  0%   { transform: scale(2.5) rotate(-15deg); opacity: 0; }
+  60%  { transform: scale(0.9) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.stamp-in {
+  animation: stampIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ─── Inputs ───────────────────────────────────────── */
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--moi-purple) !important;
+  box-shadow: 0 0 0 3px rgba(78, 49, 170, 0.15), 0 0 24px rgba(78, 49, 170, 0.06);
+}
+
+/* ─── Scrollbar ────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(78, 49, 170, 0.35);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(78, 49, 170, 0.55);
+}
+
+/* ─── Scrollbar hide (filter bar) ─────────────────── */
+
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ─── Postcard stamp line pattern ──────────────────── */
+
+.stamp-edge {
+  background-image: radial-gradient(circle, var(--bg-deep) 3px, transparent 3px);
+  background-size: 10px 10px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HOLOGRAPHIC / JARVIS UI
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Globe HTML Markers ──────────────────────────── */
+
+.holo-marker {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.holo-marker-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #d8b4fe;
+  box-shadow: 0 0 6px #d8b4fe, 0 0 16px rgba(216, 180, 254, 0.4);
+  transition: all 0.3s ease;
+}
+
+.holo-marker-ring {
+  position: absolute;
+  inset: 2px;
+  border: 1.5px solid rgba(0, 247, 255, 0.3);
+  border-radius: 50%;
+  animation: holoRingPulse 2.5s ease-in-out infinite;
+}
+
+.holo-marker-wave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%) scale(0.3);
+  border-radius: 50%;
+  border: 1px solid rgba(0, 247, 255, 0.35);
+  animation: holoWaveExpand 3s ease-out infinite;
+}
+
+.holo-marker-active .holo-marker-core {
+  background: #00f7ff;
+  width: 8px;
+  height: 8px;
+  box-shadow: 0 0 12px #00f7ff, 0 0 30px rgba(0, 247, 255, 0.6), 0 0 60px rgba(0, 247, 255, 0.2);
+}
+
+.holo-marker-active .holo-marker-ring {
+  border-color: rgba(0, 247, 255, 0.7);
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.25);
+}
+
+@keyframes holoRingPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes holoWaveExpand {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0.5; }
+  100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+}
+
+/* ─── Scanline Sweep ──────────────────────────────── */
+
+.scanline-sweep::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 247, 255, 0.04) 42%,
+    rgba(0, 247, 255, 0.12) 50%,
+    rgba(0, 247, 255, 0.04) 58%,
+    transparent 100%
+  );
+  animation: scanSweep 1.8s ease-in-out 0.4s 1 forwards;
+  pointer-events: none;
+  opacity: 0;
+}
+
+@keyframes scanSweep {
+  0%   { transform: translateY(-100%); opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* persistent subtle scanlines overlay */
+.scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 247, 255, 0.015) 2px,
+    rgba(0, 247, 255, 0.015) 4px
+  );
+  pointer-events: none;
+}
+
+/* ─── Holographic Corner Brackets ─────────────────── */
+
+.holo-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.holo-corner--tl { top: 0; left: 0; border-top: 2px solid rgba(0, 247, 255, 0.5); border-left: 2px solid rgba(0, 247, 255, 0.5); }
+.holo-corner--tr { top: 0; right: 0; border-top: 2px solid rgba(0, 247, 255, 0.5); border-right: 2px solid rgba(0, 247, 255, 0.5); }
+.holo-corner--bl { bottom: 0; left: 0; border-bottom: 2px solid rgba(0, 247, 255, 0.5); border-left: 2px solid rgba(0, 247, 255, 0.5); }
+.holo-corner--br { bottom: 0; right: 0; border-bottom: 2px solid rgba(0, 247, 255, 0.5); border-right: 2px solid rgba(0, 247, 255, 0.5); }
+
+/* ─── Holo Data Readout ───────────────────────────── */
+
+.holo-readout {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 247, 255, 0.5);
+}
+
+.holo-readout-value {
+  color: rgba(0, 247, 255, 0.85);
 }

@@ -1,65 +1,137 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Sparkles, ChevronDown } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import HoloGlobe from "@/components/HoloGlobe";
+import HoverProjection from "@/components/HoverProjection";
+import CatalogSection from "@/components/CatalogSection";
+import MintPanel from "@/components/MintPanel";
+import MintModal from "@/components/MintModal";
 
 export default function Home() {
+  const [selected, setSelected] = useState(null);
+  const [walletState, setWalletState] = useState(null);
+  const [hoveredItem, setHoveredItem] = useState(null);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
+    <>
+      {/* ── Full-screen globe background ── */}
+      <HoloGlobe
+        onHover={setHoveredItem}
+        onSelect={setSelected}
+        activeRegion="All"
+      />
+
+      {/* ── Navbar ── */}
+      <Navbar
+        walletState={walletState}
+        onConnect={setWalletState}
+        onDisconnect={() => setWalletState(null)}
+      />
+
+      {/* ── Title overlay ── */}
+      <div className="fixed top-20 left-6 z-10 pointer-events-none select-none">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400/60" />
+            <span className="holo-readout">Digital Passport Collection</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+            <span className="text-white/90">Moinkee</span>
+            <br />
+            <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              World Tour
+            </span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-white/20 text-xs mt-3 max-w-[240px] font-mono leading-relaxed">
+            Hover a marker to preview. Click to mint your memento on MOI.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        </motion.div>
+      </div>
+
+      {/* ── Holographic projection on hover ── */}
+      <HoverProjection item={hoveredItem} />
+
+      {/* ── "View Full Collection" CTA ── */}
+      {!selected && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4, duration: 0.6 }}
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-20"
+        >
+          <button
+            onClick={() => {
+              const el = document.getElementById("catalog-section");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="group flex items-center gap-2.5 px-6 py-3 rounded-full
+              bg-white/10 backdrop-blur-md border border-white/20
+              text-white text-xs font-bold uppercase tracking-widest
+              transition-all duration-300
+              hover:bg-white/20 hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(0,247,255,0.15)]"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            View Full Collection
+            <ChevronDown className="w-4 h-4 animate-bounce" />
+          </button>
+        </motion.div>
+      )}
+
+      {/* ── Mint: modal when selected, bottom panel when no selection ── */}
+      <div id="mint-panel">
+        {selected ? (
+          <MintModal
+            selected={selected}
+            onClose={() => setSelected(null)}
+            mnemonic={walletState?.mnemonic}
+            walletState={walletState}
+            onConnect={setWalletState}
+            onDisconnect={() => setWalletState(null)}
+          />
+        ) : (
+          <MintPanel
+            selected={null}
+            onClearSelection={() => {}}
+            mnemonic={walletState?.mnemonic}
+          />
+        )}
+      </div>
+
+      {/* ── Below-fold content ── */}
+      <div className="relative z-10 mt-[100vh]">
+        {/* Gradient transition from globe into catalog */}
+        <div className="h-32 bg-gradient-to-b from-transparent to-black" />
+
+        {/* Catalog grid */}
+        <div id="catalog-section">
+          <CatalogSection onSelect={setSelected} />
         </div>
-      </main>
-    </div>
+
+        {/* Footer */}
+        <div className="bg-black">
+          <footer className="pb-24 pt-6 text-center">
+            <div className="h-px max-w-xs mx-auto bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent mb-6" />
+            <p className="text-white/15 text-xs">
+              Built on{" "}
+              <a
+                href="https://moi.technology"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-cyan-500/30 hover:text-cyan-500/60 transition-colors"
+              >
+                MOI
+              </a>
+              {" "}· MAS1 · IPFS via Pinata
+            </p>
+          </footer>
+        </div>
+      </div>
+    </>
   );
 }

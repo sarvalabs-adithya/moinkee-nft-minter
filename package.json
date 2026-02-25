@@ -9,9 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "axios": "^1.13.5",
+    "framer-motion": "^12.34.3",
+    "js-moi-sdk": "^0.7.0-rc6",
+    "lucide-react": "^0.575.0",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-globe.gl": "^2.37.0",
+    "three": "^0.183.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
