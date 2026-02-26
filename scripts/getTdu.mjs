@@ -21,7 +21,7 @@ async function main() {
   const wallet = await Wallet.fromMnemonic(MNEMONIC, DERIVATION_PATH);
   wallet.connect(provider);
 
-  const address = wallet.identifier.toHex();
+  const address = (await wallet.getIdentifier()).toHex();
   console.log("\nAddress:", address);
 
   const tdu = await provider.getTDU(address);
@@ -36,6 +36,9 @@ async function main() {
           ? entry.amount.toString()
           : String(entry.amount);
       console.log("  asset_id:", entry.asset_id);
+      if (entry.token_id !== undefined && entry.token_id !== null) {
+        console.log("  token_id:", entry.token_id);
+      }
       console.log("  amount:  ", amount);
       console.log("  —");
     }

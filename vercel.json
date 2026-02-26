@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "src/app/api/mint/route.js": { "maxDuration": 15 },
+    "src/app/api/tokens/route.js": { "maxDuration": 15 },
+    "src/app/api/pinata/route.js": { "maxDuration": 15 }
+  }
+}

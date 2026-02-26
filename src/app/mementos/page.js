@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import ConnectWallet from "@/components/ConnectWallet";
+import { useWallet } from "@/context/WalletContext";
 import { FOLDER_CID, MOINKEE_LOCATIONS } from "@/constants/gallery";
 
 const IPFS_GATEWAY = "https://ipfs.io/ipfs";
@@ -23,7 +24,7 @@ const REGION_BADGES = {
 };
 
 export default function MementosPage() {
-  const [walletState, setWalletState] = useState(null);
+  const { walletState, connect, disconnect } = useWallet();
   const [loading, setLoading] = useState(false);
   const [tokens, setTokens] = useState([]);
   const [error, setError] = useState("");
@@ -36,37 +37,14 @@ export default function MementosPage() {
     setTokens([]);
 
     try {
-      const listRes = await fetch("/api/tokens", {
+      const res = await fetch("/api/tokens", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "list", mnemonic: walletState.mnemonic }),
+        body: JSON.stringify({ action: "owned", mnemonic: walletState.mnemonic }),
       });
-      if (!listRes.ok) throw new Error("Failed to fetch TDU");
-      const { amount: count } = await listRes.json();
-
-      if (count === 0) { setLoading(false); return; }
-
-      const fetched = [];
-      for (let tokenId = 0; tokenId < count; tokenId++) {
-        try {
-          const metaRes = await fetch("/api/tokens", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "metadata", mnemonic: walletState.mnemonic, tokenId }),
-          });
-          if (!metaRes.ok) continue;
-          const { uri } = await metaRes.json();
-          if (!uri) continue;
-          const cid = uri.replace("ipfs://", "");
-          const jsonRes = await fetch(`${IPFS_GATEWAY}/${cid}`);
-          if (!jsonRes.ok) continue;
-          const metadata = await jsonRes.json();
-          fetched.push({ tokenId, uri, ...metadata });
-        } catch {
-          fetched.push({ tokenId, name: `Token #${tokenId}`, error: true });
-        }
-      }
-      setTokens(fetched);
+      if (!res.ok) throw new Error("Failed to fetch tokens");
+      const { tokens: owned } = await res.json();
+      setTokens(owned || []);
     } catch (err) {
       setError(err.message || "Failed to load tokens");
     } finally {
@@ -137,8 +115,8 @@ export default function MementosPage() {
           )}
           <ConnectWallet
             walletState={walletState}
-            onConnect={setWalletState}
-            onDisconnect={() => { setWalletState(null); setTokens([]); setActiveId(null); }}
+            onConnect={connect}
+            onDisconnect={() => { disconnect(); setTokens([]); setActiveId(null); }}
           />
         </div>
       </nav>

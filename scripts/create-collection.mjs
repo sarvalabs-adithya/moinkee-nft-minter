@@ -25,7 +25,7 @@ async function main() {
   const wallet = await Wallet.fromMnemonic(MNEMONIC, path);
   wallet.connect(provider);
 
-  const adminAddress = wallet.identifier.toHex();
+  const adminAddress = (await wallet.getIdentifier()).toHex();
   console.log("Admin address:", adminAddress);
   console.log("Creating MAS1 collection: MOINFT, max_supply: 1000000");
 

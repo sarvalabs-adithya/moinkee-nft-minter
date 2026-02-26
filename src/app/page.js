@@ -9,10 +9,11 @@ import HoverProjection from "@/components/HoverProjection";
 import CatalogSection from "@/components/CatalogSection";
 import MintPanel from "@/components/MintPanel";
 import MintModal from "@/components/MintModal";
+import { useWallet } from "@/context/WalletContext";
 
 export default function Home() {
+  const { walletState, connect, disconnect } = useWallet();
   const [selected, setSelected] = useState(null);
-  const [walletState, setWalletState] = useState(null);
   const [hoveredItem, setHoveredItem] = useState(null);
 
   return (
@@ -27,8 +28,8 @@ export default function Home() {
       {/* ── Navbar ── */}
       <Navbar
         walletState={walletState}
-        onConnect={setWalletState}
-        onDisconnect={() => setWalletState(null)}
+        onConnect={connect}
+        onDisconnect={disconnect}
       />
 
       {/* ── Title overlay ── */}
@@ -91,8 +92,8 @@ export default function Home() {
             onClose={() => setSelected(null)}
             mnemonic={walletState?.mnemonic}
             walletState={walletState}
-            onConnect={setWalletState}
-            onDisconnect={() => setWalletState(null)}
+            onConnect={connect}
+            onDisconnect={disconnect}
           />
         ) : (
           <MintPanel

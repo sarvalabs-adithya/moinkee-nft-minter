@@ -64,7 +64,8 @@ export async function POST(request) {
 
     return Response.json({ error: "Unsupported content type" }, { status: 415 });
   } catch (error) {
-    const message = error.response?.data?.error?.details || error.message || "Upload failed";
+    console.error("[Pinata Error]", error.response?.status, error.response?.data || error.message);
+    const message = error.response?.data?.error?.details || error.response?.data?.error || error.message || "Upload failed";
     return Response.json({ error: message }, { status: 500 });
   }
 }

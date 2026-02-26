@@ -68,6 +68,7 @@ export default function MintModal({ selected, onClose, mnemonic, walletState, on
         name: `${travelerName.trim()}'s ${selected.event} Memento`,
         description: selected.description,
         image: `ipfs://${FOLDER_CID}/${selected.fileName}`,
+        owner: walletState?.address || "",
         attributes: {
           event: selected.event,
           location: selected.location,
@@ -81,8 +82,17 @@ export default function MintModal({ selected, onClose, mnemonic, walletState, on
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(metadata),
       });
-      if (!pinataRes.ok) throw new Error("Failed to pin metadata to IPFS");
-      const { IpfsHash: metadataCid } = await pinataRes.json();
+      if (!pinataRes.ok) {
+        const errBody = await pinataRes.text().catch(() => "");
+        console.error("Pinata failed:", pinataRes.status, errBody);
+        throw new Error(`Failed to pin metadata to IPFS (${pinataRes.status})`);
+      }
+      const pinataData = await pinataRes.json();
+      const metadataCid = pinataData.IpfsHash;
+      if (!metadataCid) {
+        console.error("Pinata response missing IpfsHash:", pinataData);
+        throw new Error("Pinata returned no CID");
+      }
 
       setStepIndex(2);
       const mintRes = await fetch("/api/mint", {

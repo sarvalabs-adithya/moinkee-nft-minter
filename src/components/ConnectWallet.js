@@ -22,7 +22,8 @@ export default function ConnectWallet({ walletState, onConnect, onDisconnect }) 
         trimmed,
         "m/44'/6174'/7020'/0/0"
       );
-      const address = wallet.identifier.toHex();
+      const id = await wallet.getIdentifier();
+      const address = id.toHex();
       onConnect({ mnemonic: trimmed, address });
       setShowModal(false);
       setInput("");
