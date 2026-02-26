@@ -1,12 +1,18 @@
 import axios from "axios";
 
-const PINATA_JWT = process.env.PINATA_JWT;
-
 export async function POST(request) {
+  const PINATA_JWT = process.env.PINATA_JWT;
+
   if (!PINATA_JWT || PINATA_JWT.trim() === "") {
-    console.error("[Pinata] PINATA_JWT is not set");
+    const allKeys = Object.keys(process.env)
+      .filter((k) => k.startsWith("PINATA"))
+      .join(", ");
+    console.error("[Pinata] PINATA_JWT is not set. Available PINATA* keys:", allKeys || "none");
     return Response.json(
-      { error: "Pinata is not configured. Set PINATA_JWT in environment variables (e.g. Vercel project settings)." },
+      {
+        error: "Pinata is not configured. Set PINATA_JWT in environment variables.",
+        debug: `Found keys: ${allKeys || "none"}`,
+      },
       { status: 503 }
     );
   }

@@ -83,9 +83,9 @@ export default function MintModal({ selected, onClose, mnemonic, walletState, on
         body: JSON.stringify(metadata),
       });
       if (!pinataRes.ok) {
-        const errBody = await pinataRes.text().catch(() => "");
-        console.error("Pinata failed:", pinataRes.status, errBody);
-        throw new Error(`Failed to pin metadata to IPFS (${pinataRes.status})`);
+        const errData = await pinataRes.json().catch(() => ({}));
+        console.error("Pinata failed:", pinataRes.status, errData);
+        throw new Error(errData.error || `Failed to pin metadata to IPFS (${pinataRes.status})`);
       }
       const pinataData = await pinataRes.json();
       const metadataCid = pinataData.IpfsHash;
