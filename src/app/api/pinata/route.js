@@ -3,6 +3,14 @@ import axios from "axios";
 const PINATA_JWT = process.env.PINATA_JWT;
 
 export async function POST(request) {
+  if (!PINATA_JWT || PINATA_JWT.trim() === "") {
+    console.error("[Pinata] PINATA_JWT is not set");
+    return Response.json(
+      { error: "Pinata is not configured. Set PINATA_JWT in environment variables (e.g. Vercel project settings)." },
+      { status: 503 }
+    );
+  }
+
   try {
     const contentType = request.headers.get("content-type") || "";
 

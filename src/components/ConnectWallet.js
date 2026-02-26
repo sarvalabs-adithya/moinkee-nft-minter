@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wallet, X } from "lucide-react";
 
-export default function ConnectWallet({ walletState, onConnect, onDisconnect }) {
+export default function ConnectWallet({ walletState, onConnect, onDisconnect, hydrated = true }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -33,6 +33,15 @@ export default function ConnectWallet({ walletState, onConnect, onDisconnect }) 
       setLoading(false);
     }
   };
+
+  if (!hydrated) {
+    return (
+      <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/30 text-xs">
+        <Wallet className="w-3.5 h-3.5 animate-pulse" />
+        <span className="font-mono">...</span>
+      </div>
+    );
+  }
 
   if (walletState) {
     const short = `${walletState.address.slice(0, 8)}...${walletState.address.slice(-6)}`;

@@ -24,7 +24,7 @@ const REGION_BADGES = {
 };
 
 export default function MementosPage() {
-  const { walletState, connect, disconnect } = useWallet();
+  const { walletState, connect, disconnect, hydrated } = useWallet();
   const [loading, setLoading] = useState(false);
   const [tokens, setTokens] = useState([]);
   const [error, setError] = useState("");
@@ -117,6 +117,7 @@ export default function MementosPage() {
             walletState={walletState}
             onConnect={connect}
             onDisconnect={() => { disconnect(); setTokens([]); setActiveId(null); }}
+            hydrated={hydrated}
           />
         </div>
       </nav>

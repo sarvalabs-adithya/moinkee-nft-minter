@@ -4,7 +4,7 @@ import { MapPin, Wallet } from "lucide-react";
 import Link from "next/link";
 import ConnectWallet from "./ConnectWallet";
 
-export default function Navbar({ walletState, onConnect, onDisconnect }) {
+export default function Navbar({ walletState, onConnect, onDisconnect, hydrated = true }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-40 bg-black/30 backdrop-blur-xl border-b border-cyan-500/8">
       <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -41,6 +41,7 @@ export default function Navbar({ walletState, onConnect, onDisconnect }) {
             walletState={walletState}
             onConnect={onConnect}
             onDisconnect={onDisconnect}
+            hydrated={hydrated}
           />
         </div>
       </div>

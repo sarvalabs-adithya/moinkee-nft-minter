@@ -12,7 +12,7 @@ import MintModal from "@/components/MintModal";
 import { useWallet } from "@/context/WalletContext";
 
 export default function Home() {
-  const { walletState, connect, disconnect } = useWallet();
+  const { walletState, connect, disconnect, hydrated } = useWallet();
   const [selected, setSelected] = useState(null);
   const [hoveredItem, setHoveredItem] = useState(null);
 
@@ -30,6 +30,7 @@ export default function Home() {
         walletState={walletState}
         onConnect={connect}
         onDisconnect={disconnect}
+        hydrated={hydrated}
       />
 
       {/* ── Title overlay ── */}
