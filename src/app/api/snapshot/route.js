@@ -33,10 +33,11 @@ async function fetchIPFSJson(uri) {
 export async function POST() {
   try {
     const assetInfo = await getAssetInfo();
-    const supply = parseInt(assetInfo.circulating_supply, 10);
+    const tokenCount = parseInt(assetInfo.dynamic_metadata?.__token_count__ ?? "0", 16);
+    const circulatingSupply = parseInt(assetInfo.circulating_supply ?? "0", 16);
 
-    if (!supply || supply <= 0) {
-      return Response.json({ tokens: [], supply: 0, message: "No tokens minted yet" });
+    if (!tokenCount || tokenCount <= 0) {
+      return Response.json({ tokens: [], tokenCount: 0, circulatingSupply, message: "No tokens minted yet" });
     }
 
     const wallet = await getWallet(ADMIN_MNEMONIC);
@@ -45,7 +46,7 @@ export async function POST() {
     const tokens = [];
     const errors = [];
 
-    for (let tokenId = 0; tokenId < supply; tokenId++) {
+    for (let tokenId = 0; tokenId < tokenCount; tokenId++) {
       const uri = await getTokenMetadataURI(mas1, tokenId);
       if (!uri) {
         errors.push({ tokenId, reason: "no URI found" });
@@ -63,7 +64,8 @@ export async function POST() {
     }
 
     return Response.json({
-      supply,
+      tokenCount,
+      circulatingSupply,
       retrieved: tokens.length,
       errors: errors.length > 0 ? errors : undefined,
       tokens,
