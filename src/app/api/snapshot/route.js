@@ -8,16 +8,18 @@ async function getTokenMetadataURI(mas1, tokenId) {
   try {
     const ctx = mas1.GetStaticTokenMetadata(tokenId, "uri");
     const res = await ctx.call();
-    if (res.receipt?.status !== 0) return null;
+    const status = res.receipt?.status;
+    if (status !== 0) return { error: `status=${status}` };
     const outputs = res.receipt?.ix_operations?.[0]?.data?.outputs;
-    if (!outputs || outputs === "0x") return null;
+    if (!outputs || outputs === "0x") return { error: "empty outputs" };
     const raw = new TextDecoder().decode(
       Buffer.from(outputs.replace(/^0x/, ""), "hex")
     );
     const match = raw.match(/(ipfs:\/\/[A-Za-z0-9_-]+)/);
-    return match ? match[1] : null;
-  } catch {
-    return null;
+    if (match) return { uri: match[1] };
+    return { error: `no ipfs match in: ${raw.substring(0, 100)}` };
+  } catch (e) {
+    return { error: e.message?.substring(0, 100) || "unknown error" };
   }
 }
 
@@ -47,12 +49,16 @@ export async function POST() {
     const errors = [];
 
     for (let tokenId = 0; tokenId < tokenCount; tokenId++) {
-      const uri = await getTokenMetadataURI(mas1, tokenId);
-      if (!uri) {
-        errors.push({ tokenId, reason: "no URI found" });
+      const result = await getTokenMetadataURI(mas1, tokenId);
+      if (result.error) {
+        // Only keep first 50 errors with details to avoid huge response
+        if (errors.length < 50) {
+          errors.push({ tokenId, reason: result.error });
+        }
         continue;
       }
 
+      const { uri } = result;
       const metadata = await fetchIPFSJson(uri);
       if (!metadata) {
         errors.push({ tokenId, uri, reason: "IPFS fetch failed" });
@@ -67,7 +73,8 @@ export async function POST() {
       tokenCount,
       circulatingSupply,
       retrieved: tokens.length,
-      errors: errors.length > 0 ? errors : undefined,
+      totalErrors: errors.length + (tokenCount - tokens.length - errors.length),
+      sampleErrors: errors.length > 0 ? errors : undefined,
       tokens,
     });
   } catch (error) {
