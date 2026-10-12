@@ -1,3 +1,4 @@
+import { recoveryAllowed, recoveryRefused } from "@/lib/recovery-guard";
 import { MAS1AssetLogic } from "js-moi-sdk";
 import { ASSET_ID, ADMIN_MNEMONIC, getWallet } from "@/lib/utils";
 import axios from "axios";
@@ -5,7 +6,8 @@ import axios from "axios";
 const PINATA_JWT = process.env.PINATA_JWT;
 const IPFS_GATEWAY = "https://ipfs.io/ipfs";
 
-export async function POST() {
+export async function POST(request) {
+  if (!recoveryAllowed(request)) return recoveryRefused();
   try {
     if (!PINATA_JWT) {
       return Response.json({ error: "PINATA_JWT not configured" }, { status: 500 });
