@@ -1,3 +1,4 @@
+import { recoveryAllowed, recoveryRefused } from "@/lib/recovery-guard";
 import { MAS1AssetLogic } from "js-moi-sdk";
 import { ASSET_ID, ADMIN_MNEMONIC, getWallet } from "@/lib/utils";
 import { getAssetInfo } from "@/lib/moi";
@@ -32,7 +33,8 @@ async function fetchIPFSJson(uri) {
   return res.json();
 }
 
-export async function POST() {
+export async function POST(request) {
+  if (!recoveryAllowed(request)) return recoveryRefused();
   try {
     const assetInfo = await getAssetInfo();
     const tokenCount = parseInt(assetInfo.dynamic_metadata?.__token_count__ ?? "0", 16);

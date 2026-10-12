@@ -10,6 +10,7 @@ In **Vercel** → your project → **Settings** → **Environment Variables**, a
 | `NEXT_PUBLIC_FOLDER_CID` | Your Pinata folder CID | Optional; app has a default. |
 | `ADMIN_MNEMONIC` | Your 12-word mnemonic | **Paste the full phrase** (e.g. `word1 word2 ... word12`). No quotes. Used only on the server. |
 | `PINATA_JWT` | Your Pinata JWT | From Pinata dashboard. |
+| `RECOVERY_SECRET` | leave unset | Enables the recovery routes. Only ever set it on your own machine, never on Vercel. |
 
 **Important:** `ADMIN_MNEMONIC` must be the complete 12-word phrase. If mint/token APIs fail with "Invalid mnemonic" or "Failed to load wallet", the value was truncated — re-paste it in Vercel (one line, space-separated).
 
