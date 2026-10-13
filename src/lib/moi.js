@@ -1,6 +1,11 @@
 import { MAS1AssetLogic } from "js-moi-sdk";
 import { ASSET_ID, ADMIN_MNEMONIC, getProvider, getWallet } from "./utils";
 
+export async function getAssetInfo() {
+  const provider = getProvider();
+  return provider.getAssetInfoByAssetID(ASSET_ID);
+}
+
 export async function mintNFT(mnemonic, metadataCid) {
   const adminWallet = await getWallet(ADMIN_MNEMONIC);
   const mas1 = new MAS1AssetLogic(ASSET_ID, adminWallet);
